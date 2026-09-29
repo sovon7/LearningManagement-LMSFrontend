@@ -1,0 +1,116 @@
+<main class="page-content">
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">ASSESSMENT CONTENT</p>
+        <h1>{{ viewMode() === 'library' ? 'General Quiz Library' : (editingId() ? 'Edit General Quiz' : 'Create General Quiz') }}</h1>
+        <p class="page-intro">{{ viewMode() === 'library' ? 'Manage standalone quizzes across any topic.' : 'Add 1–10 questions, each with three options and one correct answer.' }}</p>
+      </div>
+    </section>
+
+    <nav class="quiz-tabs" aria-label="Quiz sections">
+      <button type="button" class="quiz-tab" [class.active]="viewMode() === 'library'" (click)="cancelEditor()">General Quiz Library</button>
+      <button type="button" class="quiz-tab" [class.active]="viewMode() === 'editor'" (click)="openCreate()">Create General Quiz</button>
+    </nav>
+
+    <div class="notice error-notice" *ngIf="errorMessage()" role="alert">{{ errorMessage() }}</div>
+    <div class="notice success-notice" *ngIf="successMessage()" role="status">{{ successMessage() }}</div>
+
+    <section class="editor-panel" *ngIf="viewMode() === 'editor'">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">GENERAL QUIZ</p>
+          <h2>{{ editingId() ? 'Edit General Quiz' : 'Create General Quiz' }}</h2>
+        </div>
+        <button class="icon-button" type="button" aria-label="Cancel editing" title="Cancel editing" (click)="cancelEditor()">×</button>
+      </div>
+
+      <div class="quiz-fields">
+        <label class="field">
+          <span>Quiz title <b>*</b></span>
+          <input name="quizTitle" [(ngModel)]="title" [ngModelOptions]="{standalone: true}" maxlength="160" placeholder="e.g. Java OOP Fundamentals">
+        </label>
+      </div>
+
+      <div class="question-section-heading">
+        <div>
+          <p class="eyebrow">QUESTIONS</p>
+          <h3>Question {{ questionIndex() + 1 }} of {{ questions.length }}</h3>
+        </div>
+        <button class="secondary-button" type="button" (click)="addQuestion()" [disabled]="questions.length >= 10">＋ Add Question</button>
+      </div>
+
+      <section class="question-card" *ngIf="questions[questionIndex()] as question">
+        <div class="question-card-heading">
+          <span class="question-number">{{ questionIndex() + 1 }}</span>
+          <h4>Question {{ questionIndex() + 1 }}</h4>
+          <button class="text-button danger-text" type="button" (click)="removeQuestion(questionIndex())" [disabled]="questions.length === 1">Remove question</button>
+        </div>
+
+        <label class="field question-text-field">
+          <span>Question <b>*</b></span>
+          <textarea [name]="'questionText' + questionIndex()" [(ngModel)]="question.question" [ngModelOptions]="{standalone: true}" rows="2" placeholder="Write the question"></textarea>
+        </label>
+
+        <div class="options-grid">
+          <label class="field" *ngFor="let option of question.options; let optionIndex = index; trackBy: trackByIndex">
+            <span>Option {{ optionIndex + 1 }} <b>*</b></span>
+            <input [name]="'option' + questionIndex() + '-' + optionIndex" [(ngModel)]="question.options[optionIndex]" [ngModelOptions]="{standalone: true}" placeholder="Enter option {{ optionIndex + 1 }}">
+          </label>
+        </div>
+
+        <label class="field answer-field">
+          <span>Correct answer <b>*</b></span>
+          <select [name]="'answer' + questionIndex()" [(ngModel)]="question.correctAnswer" [ngModelOptions]="{standalone: true}">
+            <option value="">Choose the correct option</option>
+            <option *ngFor="let option of question.options; let optionIndex = index" [ngValue]="option" [disabled]="!option.trim()">{{ option.trim() || 'Complete option ' + (optionIndex + 1) + ' first' }}</option>
+          </select>
+        </label>
+      </section>
+
+      <div class="question-carousel-controls">
+        <button class="quiet-button" type="button" (click)="previousQuestion()" [disabled]="questionIndex() === 0">← Previous</button>
+        <span>{{ questionIndex() + 1 }} / {{ questions.length }}</span>
+        <button class="quiet-button" type="button" (click)="nextQuestion()" [disabled]="questionIndex() >= questions.length - 1">Next →</button>
+      </div>
+
+      <footer class="editor-footer">
+        <button class="quiet-button" type="button" (click)="cancelEditor()" [disabled]="saving()">Cancel</button>
+        <button class="primary-button" type="button" (click)="saveQuiz()" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : (editingId() ? 'Save changes' : 'Create General Quiz') }}
+        </button>
+      </footer>
+    </section>
+
+    <section class="quiz-library" *ngIf="viewMode() === 'library'">
+      <div class="library-heading">
+        <div>
+          <p class="eyebrow">GENERAL QUIZZES</p>
+          <h2>All quizzes <span>{{ quizzes().length }}</span></h2>
+        </div>
+        <button class="quiet-button" type="button" (click)="loadData()" [disabled]="loading()">{{ loading() ? 'Refreshing…' : 'Refresh' }}</button>
+      </div>
+
+      <div class="loading-state" *ngIf="loading() && !quizzes().length">Loading quizzes…</div>
+      <div class="empty-state" *ngIf="!loading() && !quizzes().length">
+        <div class="empty-mark">Q</div>
+        <h3>No quizzes yet</h3>
+        <p>Create a quiz, add questions, and choose each correct answer.</p>
+        <button class="secondary-button" type="button" (click)="openCreate()">Create General Quiz</button>
+      </div>
+
+      <div class="quiz-list" *ngIf="quizzes().length">
+        <article class="quiz-row" *ngFor="let quiz of quizzes()">
+          <div class="quiz-mark">Q</div>
+          <div class="quiz-info">
+            <h3>{{ quiz.title }}</h3>
+            <p>{{ quiz.quizId }}</p>
+            <small>{{ quiz.questions.length }} questions</small>
+          </div>
+          <div class="quiz-actions">
+            <button class="text-button" type="button" (click)="openEdit(quiz)">Edit</button>
+            <button class="text-button danger-text" type="button" (click)="deleteQuiz(quiz)">Delete</button>
+          </div>
+        </article>
+      </div>
+    </section>
+</main>

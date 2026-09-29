@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.feature-placeholder {
+  min-height: 250px;
+  padding: 30px;
+  border: 1px solid #e0e7e0;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.eyebrow {
+  margin: 0 0 9px;
+  color: #65816d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+h1 {
+  margin: 0 0 18px;
+  color: #203b2b;
+  font-size: 27px;
+}
+
+.feature-state {
+  display: inline-block;
+  padding: 6px 9px;
+  border-radius: 3px;
+  background: #edf1ed;
+  color: #637066;
+  font-size: 12px;
+  font-weight: 700;
+}

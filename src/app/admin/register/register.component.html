@@ -1,0 +1,45 @@
+<section class="auth-shell">
+  <div class="auth-card">
+    <div class="brand-block">
+      <span class="eyebrow">LMS Portal</span>
+      <h1>Create account</h1>
+      <p>Register with your name, email, and password to access the learning dashboard.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      <h2>Register</h2>
+
+      <label>
+        <span>Name</span>
+        <input type="text" formControlName="userName" placeholder="Enter full name" />
+      </label>
+
+      <label>
+        <span>Email</span>
+        <input type="email" formControlName="userEmail" placeholder="Enter email" />
+      </label>
+
+      <label>
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="Enter password" />
+      </label>
+
+      <div class="error-box" *ngIf="errorMessage()">
+        {{ errorMessage() }}
+      </div>
+
+      <div class="success-box" *ngIf="successMessage()">
+        {{ successMessage() }}
+      </div>
+
+      <button type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Registering...' : 'Register' }}
+      </button>
+
+      <p class="switch-text">
+        Already have an account?
+        <a routerLink="/admin/login">Login here</a>
+      </p>
+    </form>
+  </div>
+</section>

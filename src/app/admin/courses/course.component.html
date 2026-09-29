@@ -1,0 +1,158 @@
+<main class="page-content">
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">LEARNING CONTENT</p>
+        <h1>{{ viewMode() === 'library' ? 'Course Library' : (editingId() ? 'Edit course' : 'Create course') }}</h1>
+        <p class="page-intro">{{ viewMode() === 'library' ? 'Manage courses and open one to edit its content.' : 'Add the course details, topics, and lesson content.' }}</p>
+      </div>
+    </section>
+
+    <nav class="course-tabs" aria-label="Course sections">
+      <button type="button" class="course-tab" [class.active]="viewMode() === 'library'" (click)="cancelEdit()">Course Library</button>
+      <button type="button" class="course-tab" [class.active]="viewMode() === 'editor'" (click)="openCreate()">Create course</button>
+    </nav>
+
+    <div class="notice error-notice" *ngIf="errorMessage" role="alert">{{ errorMessage }}</div>
+    <div class="notice success-notice" *ngIf="successMessage" role="status">{{ successMessage }}</div>
+
+    <section class="editor-panel" *ngIf="viewMode() === 'editor'">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">COURSE DETAILS</p>
+          <h2>{{ editingId() ? 'Edit course' : 'Create course' }}</h2>
+        </div>
+        <button class="icon-button" type="button" aria-label="Close editor" title="Close editor" (click)="cancelEdit()">×</button>
+      </div>
+
+      <div class="course-fields">
+        <label class="field title-field">
+          <span>Course title <b>*</b></span>
+          <input name="courseTitle" [(ngModel)]="title" [ngModelOptions]="{standalone: true}" maxlength="160" placeholder="e.g. Object-Oriented Programming in Java">
+        </label>
+
+        <label class="field description-field">
+          <span>Short description <b>*</b></span>
+          <textarea name="shortDescription" [(ngModel)]="shortDescription" [ngModelOptions]="{standalone: true}" rows="3" maxlength="1000" placeholder="Summarize what learners will study"></textarea>
+          <small [class.limit-warning]="shortDescriptionCharacterCount > 1000">{{ shortDescriptionCharacterCount }} / 1,000 characters</small>
+        </label>
+
+        <div class="field thumbnail-upload-field">
+          <span>Course thumbnail <b *ngIf="!editingId()">*</b></span>
+          <div class="thumbnail-field">
+            <div class="thumbnail-preview" *ngIf="thumbnailPreview; else thumbnailPlaceholder">
+              <img [src]="thumbnailPreview" alt="Course thumbnail preview">
+            </div>
+            <ng-template #thumbnailPlaceholder>
+              <div class="thumbnail-placeholder"><span aria-hidden="true">▧</span><small>JPG, JPEG or PNG<br>Up to 5 MB</small></div>
+            </ng-template>
+            <div class="thumbnail-copy">
+              <strong>{{ thumbnailFile?.name || (editingId() ? 'Current thumbnail retained unless replaced' : 'Add a course cover image') }}</strong>
+              <small>Use a clear image that represents the course.</small>
+              <label class="secondary-button file-button">
+                {{ thumbnailFile ? 'Choose another image' : 'Choose image' }}
+                <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="onThumbnailSelected($event)">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="curriculum-heading">
+        <div>
+          <p class="eyebrow">MAIN COURSE</p>
+          <h3>Topics</h3>
+        </div>
+      </div>
+
+      <section class="module-editor">
+        <div class="topic-workspace">
+          <aside class="topic-sidebar" aria-label="Main course topics">
+            <p>TOPICS</p>
+            <button
+              class="topic-nav-item"
+              type="button"
+              *ngFor="let topic of topics; let topicIndex = index"
+              [class.selected]="selectedTopicIndex === topicIndex"
+              (click)="selectTopic(topicIndex)">
+              <span>{{ topicIndex + 1 }}</span>
+              <strong>{{ topic.title || 'Untitled topic' }}</strong>
+            </button>
+            <button class="add-topic-button" type="button" (click)="addTopic()">＋ Add topic</button>
+          </aside>
+
+          <section class="topic-detail" *ngIf="topics[selectedTopicIndex] as topic">
+            <div class="topic-heading">
+              <div>
+                <p class="eyebrow">TOPIC {{ selectedTopicIndex + 1 }}</p>
+                <h4>Topic content</h4>
+              </div>
+              <button class="text-button danger-text" type="button" (click)="removeTopic(selectedTopicIndex)" [disabled]="topics.length === 1">Remove topic</button>
+            </div>
+            <label class="field">
+              <span>Topic name <b>*</b></span>
+              <input [name]="'topicTitle' + selectedTopicIndex" [(ngModel)]="topic.title" [ngModelOptions]="{standalone: true}" placeholder="e.g. Encapsulation">
+            </label>
+            <label class="field topic-content-field">
+              <span>Detailed explanation <b>*</b></span>
+              <textarea [name]="'topicContent' + selectedTopicIndex" [(ngModel)]="topic.content" [ngModelOptions]="{standalone: true}" rows="8" placeholder="Write the lesson content for this topic"></textarea>
+            </label>
+
+            <div class="snippets-heading">
+              <span>Code examples <small>Optional</small></span>
+              <button class="text-button" type="button" (click)="addCodeSnippet(selectedTopicIndex)">＋ Add code example</button>
+            </div>
+            <div class="snippet-editor" *ngFor="let snippet of topic.codeSnippets; let snippetIndex = index; trackBy: trackByIndex">
+              <label class="field code-field">
+                <span>Code</span>
+                <textarea [name]="'snippetCode' + selectedTopicIndex + '-' + snippetIndex" [(ngModel)]="snippet.code" [ngModelOptions]="{standalone: true}" rows="4" placeholder="Paste a code example"></textarea>
+              </label>
+                <button class="icon-button remove-snippet" type="button" aria-label="Remove code example" title="Remove code example" (click)="removeCodeSnippet(selectedTopicIndex, snippetIndex)">×</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <div class="editor-footer">
+        <button class="quiet-button" type="button" (click)="cancelEdit()" [disabled]="saving()">Cancel</button>
+        <button class="primary-button" type="button" (click)="saveCourse()" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : (editingId() ? 'Save changes' : 'Create course') }}
+        </button>
+      </div>
+    </section>
+
+    <section class="course-library" *ngIf="viewMode() === 'library'">
+      <div class="library-heading">
+        <div>
+          <p class="eyebrow">COURSE LIBRARY</p>
+          <h2>All courses <span>{{ courses().length }}</span></h2>
+        </div>
+        <button class="quiet-button" type="button" (click)="loadCourses()" [disabled]="loading()">{{ loading() ? 'Refreshing…' : 'Refresh' }}</button>
+      </div>
+
+      <div class="loading-state" *ngIf="loading() && !courses().length">Loading courses…</div>
+      <div class="empty-state" *ngIf="!loading() && !courses().length">
+        <div class="empty-mark">C</div>
+        <h3>No courses yet</h3>
+        <p>Create the first course and organize it into modules and topics.</p>
+        <button class="secondary-button" type="button" (click)="openCreate()">Create course</button>
+      </div>
+
+      <div class="course-list" *ngIf="courses().length">
+        <article class="course-row" *ngFor="let course of courses()">
+          <img class="course-cover" [src]="imageUrl(course.thumbnailImage)" [alt]="course.title + ' thumbnail'">
+          <div class="course-info">
+            <div class="course-title-line">
+              <h3>{{ course.title }}</h3>
+              <span class="status-tag" [class.published-tag]="course.publishStatus === 'published'">{{ course.publishStatus }}</span>
+            </div>
+            <p>{{ course.shortDescription }}</p>
+            <small>{{ course.courseId }} · Main course · {{ topicCount(course) }} topics</small>
+          </div>
+          <div class="course-actions">
+            <button class="text-button" type="button" (click)="openEdit(course)">Edit</button>
+            <button class="text-button danger-text" type="button" (click)="deleteCourse(course)">Delete</button>
+          </div>
+        </article>
+      </div>
+    </section>
+</main>

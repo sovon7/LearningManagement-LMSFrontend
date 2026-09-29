@@ -1,0 +1,99 @@
+<main class="page-content">
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">LEARNING CHECK</p>
+        <h1>General Quizzes</h1>
+        <p class="page-intro">Choose a general quiz and answer each question to see your result.</p>
+      </div>
+      <button class="quiet-button" type="button" (click)="loadQuizzes()" [disabled]="loading()">{{ loading() ? 'Refreshing…' : 'Refresh' }}</button>
+    </section>
+
+    <div class="notice error-notice" *ngIf="errorMessage() && !quizDetails()" role="alert">{{ errorMessage() }}</div>
+
+    <section class="quiz-list" *ngIf="quizzes().length">
+      <article class="quiz-card" *ngFor="let quiz of quizzes()">
+        <div class="quiz-mark" aria-hidden="true">Q</div>
+        <div class="quiz-info">
+          <div class="quiz-title-line">
+            <h2>{{ quiz.title }}</h2>
+            <span
+              class="attempt-status"
+              [class.pass-status]="quiz.attempt?.result === 'PASS'"
+              [class.fail-status]="quiz.attempt?.result === 'FAIL'">
+              {{ quiz.attempt ? (quiz.attempt.result === 'PASS' ? 'Passed' : 'Failed') : 'Not taken' }}
+            </span>
+          </div>
+          <p>{{ quiz.questionCount }} questions</p>
+          <small *ngIf="quiz.attempt">Score: {{ quiz.attempt.scorePercentage }}% · {{ quiz.attempt.correctCount }}/{{ quiz.attempt.totalQuestions }} correct</small>
+        </div>
+        <button class="primary-button" type="button" (click)="startQuiz(quiz)" [disabled]="!!quiz.attempt || loadingQuizId() !== null">
+          {{ loadingQuizId() === quiz.quizId ? 'Opening…' : (quiz.attempt ? 'Completed' : 'Start quiz') }}
+        </button>
+      </article>
+    </section>
+
+    <section class="empty-state" *ngIf="!loading() && !quizzes().length && !errorMessage()">
+      <div class="empty-mark">Q</div>
+      <h2>No general quizzes available</h2>
+      <p>Admin-created quizzes will appear here.</p>
+    </section>
+    <div class="loading-state" *ngIf="loading() && !quizzes().length">Loading quizzes…</div>
+<div class="modal-backdrop" *ngIf="quizDetails() as quiz" (click)="closeQuiz()">
+    <section class="quiz-modal" role="dialog" aria-modal="true" [attr.aria-label]="quiz.title" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <div>
+          <p class="eyebrow">{{ result() ? 'GENERAL QUIZ RESULT' : 'GENERAL QUIZ IN PROGRESS' }}</p>
+          <h2>{{ quiz.title }}</h2>
+        </div>
+        <button class="icon-button" type="button" aria-label="Close quiz" title="Close quiz" (click)="closeQuiz()">×</button>
+      </header>
+
+      <ng-container *ngIf="result() as attempt; else activeQuestion">
+        <section class="result-panel" [class.pass-result]="attempt.result === 'PASS'" [class.fail-result]="attempt.result === 'FAIL'">
+          <p class="result-label">{{ attempt.result === 'PASS' ? 'Congratulations' : 'Keep practicing' }}</p>
+          <h3>{{ attempt.result === 'PASS' ? 'Pass' : 'Fail' }}</h3>
+          <strong class="score-value">{{ attempt.scorePercentage }}%</strong>
+          <p>{{ attempt.correctCount }} of {{ attempt.totalQuestions }} answers correct</p>
+        </section>
+        <button class="primary-button result-close" type="button" (click)="closeQuiz()">Back to quizzes</button>
+      </ng-container>
+
+      <ng-template #activeQuestion>
+        <div class="question-progress">
+          <span>Question {{ questionIndex() + 1 }} of {{ quiz.questions.length }}</span>
+          <div class="progress-track"><span [style.width.%]="((questionIndex() + 1) / quiz.questions.length) * 100"></span></div>
+        </div>
+        <div class="question-body" *ngIf="currentQuestion() as question">
+          <h3>{{ question.question }}</h3>
+          <div class="answer-list">
+            <button
+              class="answer-option"
+              type="button"
+              *ngFor="let option of question.options; let optionIndex = index"
+              [class.answer-selected]="selectedAnswers()[questionIndex()] === optionIndex"
+              [attr.aria-pressed]="selectedAnswers()[questionIndex()] === optionIndex"
+              (click)="selectAnswer(optionIndex)">
+              <span class="option-marker">{{ ['A', 'B', 'C'][optionIndex] }}</span>
+              <span>{{ option }}</span>
+            </button>
+          </div>
+        </div>
+        <div class="notice error-notice" *ngIf="errorMessage()" role="alert">{{ errorMessage() }}</div>
+        <footer class="question-footer">
+          <button class="quiet-button" type="button" (click)="previousQuestion()" [disabled]="questionIndex() === 0">Previous</button>
+          <button
+            *ngIf="questionIndex() < quiz.questions.length - 1"
+            class="primary-button"
+            type="button"
+            (click)="nextQuestion()"
+            [disabled]="selectedAnswers()[questionIndex()] === null">Next</button>
+          <button
+            *ngIf="questionIndex() === quiz.questions.length - 1"
+            class="primary-button"
+            type="button"
+            (click)="submitQuiz()"
+            [disabled]="!allAnswered() || submitting()">{{ submitting() ? 'Submitting…' : 'Submit quiz' }}</button>
+        </footer>
+      </ng-template>
+    </section>
+</div>

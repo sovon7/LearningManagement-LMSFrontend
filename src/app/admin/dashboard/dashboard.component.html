@@ -1,0 +1,31 @@
+<main class="main-panel">
+  <section class="dashboard-intro">
+    <p class="greeting">{{ isAdmin ? 'ADMIN OVERVIEW' : 'LEARNING OVERVIEW' }}</p>
+    <h1>Welcome back, {{ currentUser()?.userName || currentUser()?.name || 'User' }}</h1>
+    <p>Choose a workspace section to continue.</p>
+  </section>
+    <section class="summary-grid">
+      <a class="summary-card" *ngFor="let card of cards" [routerLink]="featureRoute(card.name)">
+        <div class="icon-box">{{ card.name.charAt(0) }}</div>
+        <div>
+          <h3>{{ card.name }}</h3>
+          <p>{{ card.description }}</p>
+          <span class="course-link">{{ accessFor(card.name) }}</span>
+        </div>
+      </a>
+    </section>
+
+    <section class="feature-panel">
+      <div class="feature-header">
+        <h3>Feature Access</h3>
+        <span>{{ isAdmin ? 'Admin Access' : 'Candidate Access' }}</span>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature-row" *ngFor="let card of cards">
+          <span>{{ card.name }}</span>
+          <strong>{{ accessFor(card.name) }}</strong>
+        </div>
+      </div>
+    </section>
+</main>

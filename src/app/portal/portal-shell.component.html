@@ -1,0 +1,51 @@
+<div class="portal-layout">
+  <aside class="sidebar" aria-label="Main navigation">
+    <a class="brand" [routerLink]="isAdmin ? '/admin/dashboard' : '/candidate/dashboard'" aria-label="Home">
+      <img src="assets/logo-homePage/homePageLogo.png" alt="LMS home">
+    </a>
+
+    <nav class="nav-menu">
+      <a
+        *ngFor="let item of navigation"
+        class="nav-item"
+        [routerLink]="isAdmin ? item.adminRoute : item.candidateRoute"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeProfile()">
+        <span class="nav-mark" aria-hidden="true">{{ item.label === 'Dashboard' ? '⌂' : item.label.charAt(0) }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-foot">LEARNING MANAGEMENT</div>
+  </aside>
+
+  <section class="workspace">
+    <header class="topbar">
+      <div class="workspace-label">
+        <span class="workspace-dot"></span>
+        <span>{{ isAdmin ? 'Admin workspace' : 'Candidate workspace' }}</span>
+      </div>
+
+      <div class="profile-area">
+        <button class="profile-trigger" type="button" [attr.aria-expanded]="profileOpen()" (click)="toggleProfile()">
+          <span class="avatar">{{ userName.charAt(0).toUpperCase() }}</span>
+          <span class="profile-name">{{ userName }}</span>
+        </button>
+
+        <section class="profile-menu" *ngIf="profileOpen()">
+          <div class="profile-details">
+            <strong>{{ userName }}</strong>
+            <span>{{ userEmail }}</span>
+            <small>{{ isAdmin ? 'Administrator' : 'Candidate' }}</small>
+          </div>
+          <button type="button" (click)="logout()">Log out</button>
+        </section>
+      </div>
+    </header>
+
+    <main class="content-panel" (click)="closeProfile()">
+      <router-outlet />
+    </main>
+  </section>
+</div>

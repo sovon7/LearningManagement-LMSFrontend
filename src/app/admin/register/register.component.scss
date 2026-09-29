@@ -1,0 +1,139 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef4ff 0%, #f6f7fb 100%);
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: min(920px, 100%);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(38, 52, 88, 0.12);
+  overflow: hidden;
+}
+
+.brand-block {
+  background: linear-gradient(180deg, #121b36 0%, #1f2d4f 100%);
+  color: #fff;
+  padding: 40px 32px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.brand-block h1 {
+  margin: 18px 0 12px;
+  font-size: 2.3rem;
+}
+
+.brand-block p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.auth-form {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+}
+
+.auth-form h2 {
+  margin: 0 0 10px;
+  color: #1a2340;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+  color: #2f3e5b;
+}
+
+input {
+  border: 1px solid #dfe7f3;
+  border-radius: 10px;
+  height: 46px;
+  padding: 0 14px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  border-color: #6b8cff;
+  box-shadow: 0 0 0 4px rgba(107, 140, 255, 0.15);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  height: 48px;
+  background: linear-gradient(135deg, #5c7cff 0%, #6d38ff 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-box,
+.success-box {
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.error-box {
+  background: #fff1f2;
+  color: #b42318;
+  border: 1px solid #fecdd3;
+}
+
+.success-box {
+  background: #ecfdf5;
+  color: #027a48;
+  border: 1px solid #a7f3d0;
+}
+
+.switch-text {
+  margin: 0;
+  color: #5b6b85;
+  text-align: center;
+}
+
+.switch-text a {
+  color: #3255d2;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .auth-card {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-block {
+    padding-bottom: 20px;
+  }
+}

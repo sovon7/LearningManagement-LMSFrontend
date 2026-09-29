@@ -1,0 +1,36 @@
+<section class="auth-shell">
+  <div class="auth-card">
+    <div class="brand-block">
+      <span class="eyebrow">LMS Portal</span>
+      <h1>Welcome back</h1>
+      <p>Sign in to manage courses, videos, general quizzes, and blog content.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      <h2>Login</h2>
+
+      <label>
+        <span>Email</span>
+        <input type="email" formControlName="userEmail" placeholder="Enter email" />
+      </label>
+
+      <label>
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="Enter password" />
+      </label>
+
+      <div class="error-box" *ngIf="errorMessage()">
+        {{ errorMessage() }}
+      </div>
+
+      <button type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Signing in...' : 'Login' }}
+      </button>
+
+      <p class="switch-text">
+        Need an account?
+        <a routerLink="/admin/register">Create one</a>
+      </p>
+    </form>
+  </div>
+</section>
