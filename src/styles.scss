@@ -1,1 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+html {
+	font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif !important;
+}
+
+body {
+	margin: 0;
+	font-family: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+	font-family: inherit;
+}

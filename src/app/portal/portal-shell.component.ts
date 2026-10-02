@@ -56,6 +56,13 @@ export class PortalShellComponent {
     return user?.userEmail || user?.email || '';
   }
 
+  get currentSection(): string {
+    const currentPath = this.router.url.split('?')[0];
+    return this.navigation.find((item) =>
+      currentPath === (this.isAdmin ? item.adminRoute : item.candidateRoute)
+    )?.label || 'Dashboard';
+  }
+
   toggleProfile(): void {
     this.profileOpen.update((isOpen) => !isOpen);
   }

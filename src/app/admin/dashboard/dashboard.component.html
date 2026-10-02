@@ -1,31 +1,27 @@
 <main class="main-panel">
   <section class="dashboard-intro">
-    <p class="greeting">{{ isAdmin ? 'ADMIN OVERVIEW' : 'LEARNING OVERVIEW' }}</p>
-    <h1>Welcome back, {{ currentUser()?.userName || currentUser()?.name || 'User' }}</h1>
-    <p>Choose a workspace section to continue.</p>
+    <div>
+      <p class="greeting">{{ isAdmin ? 'YOUR LEARNING SYSTEM' : 'YOUR LEARNING SPACE' }}</p>
+      <h1>Welcome back, {{ currentUser()?.userName || currentUser()?.name || 'User' }}</h1>
+      <p>Choose a feature to get started.</p>
+    </div>
+    <span class="overview-role">{{ isAdmin ? 'ADMIN ACCESS' : 'CANDIDATE ACCESS' }}</span>
   </section>
-    <section class="summary-grid">
-      <a class="summary-card" *ngFor="let card of cards" [routerLink]="featureRoute(card.name)">
-        <div class="icon-box">{{ card.name.charAt(0) }}</div>
-        <div>
-          <h3>{{ card.name }}</h3>
-          <p>{{ card.description }}</p>
-          <span class="course-link">{{ accessFor(card.name) }}</span>
-        </div>
-      </a>
-    </section>
-
-    <section class="feature-panel">
-      <div class="feature-header">
-        <h3>Feature Access</h3>
-        <span>{{ isAdmin ? 'Admin Access' : 'Candidate Access' }}</span>
+  <section class="feature-grid" aria-label="LMS features">
+    <a class="feature-tile" *ngFor="let card of cards" [attr.data-tone]="card.tone" [routerLink]="featureRoute(card.name)">
+      <div class="tile-topline">
+        <span class="tile-symbol">{{ card.symbol }}</span>
+        <span class="tile-arrow" aria-hidden="true">↗</span>
       </div>
-
-      <div class="feature-list">
-        <div class="feature-row" *ngFor="let card of cards">
-          <span>{{ card.name }}</span>
-          <strong>{{ accessFor(card.name) }}</strong>
-        </div>
+      <div class="tile-copy">
+        <p>{{ isAdmin ? 'CONTENT WORKSPACE' : 'LEARNING FEATURE' }}</p>
+        <h2>{{ card.name }}</h2>
+        <span>{{ card.description }}</span>
       </div>
-    </section>
+      <div class="tile-footer">
+        <span>{{ accessFor(card.name) }}</span>
+        <span class="tile-index">0{{ cards.indexOf(card) + 1 }}</span>
+      </div>
+    </a>
+  </section>
 </main>

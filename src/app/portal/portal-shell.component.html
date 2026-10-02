@@ -1,6 +1,6 @@
 <div class="portal-layout">
   <aside class="sidebar" aria-label="Main navigation">
-    <a class="brand" [routerLink]="isAdmin ? '/admin/dashboard' : '/candidate/dashboard'" aria-label="Home">
+    <a class="brand" [routerLink]="isAdmin ? '/admin/dashboard' : '/candidate/dashboard'" aria-label="LMS home">
       <img src="assets/logo-homePage/homePageLogo.png" alt="LMS home">
     </a>
 
@@ -22,15 +22,21 @@
 
   <section class="workspace">
     <header class="topbar">
-      <div class="workspace-label">
-        <span class="workspace-dot"></span>
-        <span>{{ isAdmin ? 'Admin workspace' : 'Candidate workspace' }}</span>
+      <div class="section-heading">
+        <span class="section-mark" aria-hidden="true"></span>
+        <div>
+          <small>{{ isAdmin ? 'ADMIN PORTAL' : 'CANDIDATE PORTAL' }}</small>
+          <strong>{{ currentSection }}</strong>
+        </div>
       </div>
 
       <div class="profile-area">
         <button class="profile-trigger" type="button" [attr.aria-expanded]="profileOpen()" (click)="toggleProfile()">
           <span class="avatar">{{ userName.charAt(0).toUpperCase() }}</span>
-          <span class="profile-name">{{ userName }}</span>
+          <span class="profile-copy">
+            <strong>{{ userName }}</strong>
+            <small>{{ isAdmin ? 'Administrator' : 'Candidate' }}</small>
+          </span>
         </button>
 
         <section class="profile-menu" *ngIf="profileOpen()">

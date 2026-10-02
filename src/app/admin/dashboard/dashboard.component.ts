@@ -12,10 +12,10 @@ import { AuthService } from '../../core/auth.service';
 })
 export class DashboardComponent {
   readonly cards = [
-    { name: 'Blog', description: 'Manage blog posts and content updates.' },
-    { name: 'Course', description: 'View and manage course information.' },
-    { name: 'Video', description: 'Manage video resources and lectures.' },
-    { name: 'General Quiz', description: 'Create and monitor standalone quizzes.' }
+    { name: 'Blog', description: 'Share short, useful learning notes.', symbol: 'B', tone: 'coral' },
+    { name: 'Course', description: 'Build structured lessons and topic content.', symbol: 'C', tone: 'green' },
+    { name: 'Video', description: 'Explore learning videos and related resources.', symbol: 'V', tone: 'blue' },
+    { name: 'General Quiz', description: 'Practice with topic-based multiple-choice quizzes.', symbol: 'Q', tone: 'gold' }
   ];
 
   constructor(
