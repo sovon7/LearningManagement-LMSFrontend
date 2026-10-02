@@ -6,6 +6,7 @@ import { CourseComponent } from './courses/course.component';
 import { AdminQuizzesComponent } from './quizzes/admin-quizzes.component';
 import { PortalShellComponent } from '../portal/portal-shell.component';
 import { FeaturePlaceholderComponent } from '../portal/feature-placeholder.component';
+import { BlogComponent } from '../blog/blog.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -22,7 +23,7 @@ export const ADMIN_ROUTES: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'blog', component: FeaturePlaceholderComponent, data: { featureName: 'Blog' } },
+      { path: 'blog', component: BlogComponent },
       { path: 'courses', component: CourseComponent },
       { path: 'video', component: FeaturePlaceholderComponent, data: { featureName: 'Video' } },
       { path: 'quizzes', component: AdminQuizzesComponent }

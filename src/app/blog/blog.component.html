@@ -1,0 +1,106 @@
+<main class="blog-page">
+  <section class="page-heading">
+    <div>
+      <p class="eyebrow">COMMUNITY KNOWLEDGE</p>
+      <h1>{{ editorOpen() ? (editingId() ? 'Edit Blog' : 'Create Blog') : (isAdmin ? 'Blog Moderation' : 'Blog Library') }}</h1>
+      <p class="page-intro">{{ editorOpen() ? 'Share a useful learning topic with the LMS community.' : (isAdmin ? 'Review published community posts and remove content that violates guidelines.' : 'Read and share learning topics from the community.') }}</p>
+    </div>
+    <button *ngIf="!isAdmin && !editorOpen()" class="primary-button" type="button" (click)="openCreate()">＋ Create Blog</button>
+  </section>
+
+  <div class="notice error-notice" *ngIf="errorMessage()" role="alert">{{ errorMessage() }}</div>
+  <div class="notice success-notice" *ngIf="successMessage()" role="status">{{ successMessage() }}</div>
+
+  <section class="blog-editor" *ngIf="editorOpen()">
+    <header class="editor-heading">
+      <div>
+        <p class="eyebrow">BLOG DETAILS</p>
+        <h2>{{ editingId() ? 'Edit your Blog' : 'New community Blog' }}</h2>
+      </div>
+      <button class="icon-button" type="button" aria-label="Close Blog editor" title="Close editor" (click)="cancelEditor()">×</button>
+    </header>
+
+    <div class="blog-form-grid">
+      <label class="field full-width">
+        <span>Title <b>*</b></span>
+        <input name="blogTitle" [(ngModel)]="title" [ngModelOptions]="{standalone: true}" maxlength="180" placeholder="Give your learning topic a clear title">
+      </label>
+
+      <label class="field summary-field">
+        <span>Short description <b>*</b></span>
+        <textarea name="blogSummary" [(ngModel)]="summary" [ngModelOptions]="{standalone: true}" rows="4" placeholder="Summarize the topic in up to 300 words"></textarea>
+        <small [class.limit-warning]="summaryWordCount > 300">{{ summaryWordCount }} / 300 words</small>
+      </label>
+
+      <div class="field thumbnail-field-column">
+        <span>Thumbnail image <b *ngIf="!editingId()">*</b></span>
+        <div class="thumbnail-picker">
+          <div class="thumbnail-preview" *ngIf="thumbnailPreview; else noThumbnail">
+            <img [src]="thumbnailPreview" alt="Blog thumbnail preview">
+          </div>
+          <ng-template #noThumbnail>
+            <div class="thumbnail-empty"><span aria-hidden="true">▧</span><small>JPG, JPEG, PNG · Max 5 MB</small></div>
+          </ng-template>
+          <div class="thumbnail-help">
+            <strong>{{ thumbnailFile?.name || (editingId() ? 'Current thumbnail retained' : 'Choose a topic image') }}</strong>
+            <small>Use an image related to your learning topic.</small>
+            <label class="secondary-button file-button">
+              {{ thumbnailFile ? 'Replace image' : 'Choose image' }}
+              <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="selectThumbnail($event)">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <label class="field full-width explanation-field">
+        <span>Brief explanation <b>*</b></span>
+        <textarea name="blogDescription" [(ngModel)]="description" [ngModelOptions]="{standalone: true}" rows="12" placeholder="Explain the topic in detail. Minimum 550 words."></textarea>
+        <small>{{ descriptionWordCount }} / 550 minimum words</small>
+      </label>
+    </div>
+
+    <footer class="editor-actions">
+      <button class="quiet-button" type="button" (click)="cancelEditor()" [disabled]="saving()">Cancel</button>
+      <button class="primary-button" type="button" (click)="saveBlog()" [disabled]="saving()">{{ saving() ? 'Submitting…' : (editingId() ? 'Save changes' : 'Submit Blog') }}</button>
+    </footer>
+  </section>
+
+  <section class="blog-library" *ngIf="!editorOpen()">
+    <header class="library-heading">
+      <div>
+        <p class="eyebrow">PUBLISHED POSTS</p>
+        <h2>All Blogs <span>{{ blogs().length }}</span></h2>
+      </div>
+      <button class="quiet-button" type="button" (click)="loadBlogs()" [disabled]="loading()">{{ loading() ? 'Refreshing…' : 'Refresh' }}</button>
+    </header>
+
+    <div class="loading-state" *ngIf="loading() && !blogs().length">Loading Blogs…</div>
+    <div class="empty-state" *ngIf="!loading() && !blogs().length">
+      <div class="empty-mark">B</div>
+      <h3>No Blogs yet</h3>
+      <p>Learning topics shared by Candidates will appear here.</p>
+      <button *ngIf="!isAdmin" class="secondary-button" type="button" (click)="openCreate()">Create the first Blog</button>
+    </div>
+
+    <article class="blog-card" *ngFor="let blog of blogs()">
+      <img class="blog-cover" [src]="imageUrl(blog.thumbnailImage)" [alt]="blog.title + ' thumbnail'">
+      <div class="blog-content">
+        <div class="blog-meta">
+          <span>{{ blog.blogId }}</span>
+          <span>{{ blog.authorName }}</span>
+          <span>{{ blog.createdAt | date:'mediumDate' }}</span>
+        </div>
+        <h3>{{ blog.title }}</h3>
+        <p class="blog-summary">{{ blog.summary }}</p>
+        <div class="blog-actions">
+          <button class="text-button" type="button" (click)="toggleDetails(blog)">{{ expandedBlogId() === blog.blogId ? 'Hide explanation' : 'Read explanation' }}</button>
+          <button *ngIf="!isAdmin && blog.isOwner" class="text-button" type="button" (click)="openEdit(blog)">Edit</button>
+          <button *ngIf="isAdmin || blog.isOwner" class="text-button danger-text" type="button" (click)="deleteBlog(blog)">{{ isAdmin ? 'Remove post' : 'Delete' }}</button>
+        </div>
+        <section class="blog-explanation" *ngIf="expandedBlogId() === blog.blogId">
+          <p>{{ blog.description }}</p>
+        </section>
+      </div>
+    </article>
+  </section>
+</main>
